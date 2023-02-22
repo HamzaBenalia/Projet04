@@ -1,0 +1,15 @@
+-------------------------------------------------------------------------------
+Test set: com.parkit.parkingsystem.InputReaderUtilTest
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 1, Errors: 1, Skipped: 0, Time elapsed: 0.692 s <<< FAILURE! - in com.parkit.parkingsystem.InputReaderUtilTest
+testReadVehicleRegistrationNumber  Time elapsed: 0.036 s  <<< ERROR!
+java.util.NoSuchElementException: No line found
+	at com.parkit.parkingsystem.InputReaderUtilTest.testReadVehicleRegistrationNumber(InputReaderUtilTest.java:27)
+
+testReadVehicleRegistrationNumberWithInvalidInput  Time elapsed: 0.02 s  <<< FAILURE!
+java.lang.AssertionError: unexpected exception type thrown; expected:<java.lang.IllegalArgumentException> but was:<java.util.NoSuchElementException>
+	at com.parkit.parkingsystem.InputReaderUtilTest.testReadVehicleRegistrationNumberWithInvalidInput(InputReaderUtilTest.java:39)
+Caused by: java.util.NoSuchElementException: No line found
+	at com.parkit.parkingsystem.InputReaderUtilTest.lambda$testReadVehicleRegistrationNumberWithInvalidInput$0(InputReaderUtilTest.java:40)
+	at com.parkit.parkingsystem.InputReaderUtilTest.testReadVehicleRegistrationNumberWithInvalidInput(InputReaderUtilTest.java:39)
+
