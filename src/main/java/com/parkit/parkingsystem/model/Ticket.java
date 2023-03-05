@@ -1,5 +1,7 @@
 package com.parkit.parkingsystem.model;
 
+import com.parkit.parkingsystem.constants.ParkingType;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -20,11 +22,11 @@ public class Ticket {
     }
 
     public ParkingSpot getParkingSpot() {
-        return parkingSpot;
+        return new ParkingSpot(this.parkingSpot.getId(), this.parkingSpot.getParkingType(), this.parkingSpot.isAvailable());
     }
 
     public void setParkingSpot(ParkingSpot parkingSpot) {
-        this.parkingSpot = parkingSpot;
+        this.parkingSpot =  new ParkingSpot(parkingSpot.getId(), parkingSpot.getParkingType(), parkingSpot.isAvailable());
     }
 
     public String getVehicleRegNumber() {
@@ -44,18 +46,18 @@ public class Ticket {
     }
 
     public Date getInTime() {
-        return inTime;
+        return new Date(this.inTime.getTime());
     }
 
     public void setInTime(Date inTime) {
-        this.inTime = inTime;
+        this.inTime = new Date(inTime.getTime());
     }
 
     public Date getOutTime() {
-        return outTime;
+        return  new Date(this.outTime.getTime());
     }
 
     public void setOutTime(Date outTime) {
-        this.outTime = outTime;
+        this.outTime = new Date(outTime.getTime());
     }
 }

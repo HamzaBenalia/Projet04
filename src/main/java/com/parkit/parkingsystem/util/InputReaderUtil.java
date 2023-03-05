@@ -3,22 +3,29 @@ package com.parkit.parkingsystem.util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class InputReaderUtil {
 
-    private static Scanner scan = new Scanner(System.in);
+    private static Scanner scan = new Scanner(System.in, StandardCharsets.UTF_8.name()); // En utilisant StandardCharsets.UTF_8.name() comme deuxième argument du constructeur Scanner, vous spécifiez explicitement l'encodage des caractères à utiliser pour lire l'entrée utilisateur. Ici, nous utilisons l'encodage UTF-8, qui est un encodage de caractères largement utilisé et pris en charge.
+
+
+
     private static final Logger logger = LogManager.getLogger("InputReaderUtil");
 
     public int readSelection() {
         try {
             int input = Integer.parseInt(scan.nextLine());
             return input;
+
+
         }catch(Exception e){
             logger.error("Error while reading user input from Shell", e);
             System.out.println("Error reading input. Please enter valid number for proceeding further");
             return -1;
         }
+
     }
 
     public String readVehicleRegistrationNumber() throws Exception {

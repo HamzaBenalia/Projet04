@@ -72,6 +72,16 @@ public class InputReaderUtilTest {
         assertEquals(-1, selection);
     }
 
+    @Test
+    public void readVehicleRegistrationNumber_shouldThrowIllegalArgumentException_WhenInputIsNullOrVoid() throws Exception {
+        String inputVehicleNumber = " ";
+        InputStream inNumber = new ByteArrayInputStream(inputVehicleNumber.getBytes());
+        System.setIn(inNumber);
+        InputReaderUtil inputReaderUtil = new InputReaderUtil();
+
+        assertThrows(IllegalArgumentException.class, () -> inputReaderUtil.readVehicleRegistrationNumber());
+    }
+
 }
 
 

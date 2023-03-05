@@ -3,17 +3,32 @@ package com.parkit.parkingsystem.config;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 
 public class DataBaseConfig {
-
+String line;
     private static final Logger logger = LogManager.getLogger("DataBaseConfig");
 
     public Connection getConnection() throws ClassNotFoundException, SQLException {
         logger.info("Create DB connection");
         Class.forName("com.mysql.cj.jdbc.Driver");
+        try {
+            File file = new File("../.idea/JDBCPASSWORD.txt");
+            InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            line = bufferedReader.readLine();
+            bufferedReader.close();
+            inputStreamReader.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/prod?serverTimezone=UTC","root","rootroot");
+                "jdbc:mysql://localhost:3306/prod?serverTimezone=UTC","root",line);
     }
 
     public void closeConnection(Connection con){

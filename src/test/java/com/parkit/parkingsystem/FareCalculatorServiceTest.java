@@ -2,14 +2,16 @@ package com.parkit.parkingsystem;
 
 import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.constants.ParkingType;
+import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.FareCalculatorService;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Date;
 
@@ -70,6 +72,31 @@ public class FareCalculatorServiceTest {
         assertThrows(NullPointerException.class, () -> fareCalculatorService.calculateFare(ticket));
     }
 
+
+    @Test
+    @DisplayName("Calculate fare for unknown parking type should throw an exception")
+    public void testCalculateFareForUnknownParkingTypeShouldThrowException() {
+        // GIVEN
+        FareCalculatorService fareCalculatorService = new FareCalculatorService();
+        ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.UNKNOWN, true);
+        Ticket ticket = new Ticket();
+        ticket.setParkingSpot(parkingSpot);
+        ticket.setInTime(new Date(System.currentTimeMillis() - (2 * 60 * 60 * 1000))); // 2 hours ago
+        ticket.setOutTime(new Date(System.currentTimeMillis()));
+
+        // WHEN
+        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            fareCalculatorService.calculateFare(ticket);
+        });
+
+        // THEN
+        String expectedMessage = "Unkown Parking Type";
+        String actualMessage = exception.getMessage();
+        Assertions.assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+
+
     @Test
     public void calculateFareBikeWithFutureInTime(){
         Date inTime = new Date();
@@ -125,4 +152,57 @@ public class FareCalculatorServiceTest {
         assertEquals((24 * Fare.CAR_RATE_PER_HOUR) , ticket.getPrice());
     }
 
-}
+
+
+        @Test
+        public void testCalculateFare_recurrentUser() {
+            // Arrange
+            FareCalculatorService fareCalculatorService = new FareCalculatorService();
+            Ticket ticket = new Ticket();
+            ticket.setVehicleRegNumber("ABCDEF");
+            ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, false));
+            ticket.setInTime(new Date(System.currentTimeMillis() - (2 * 60 * 60 * 1000))); // 2 hours ago
+            ticket.setOutTime(new Date());
+            TicketDAO ticketDAO = mock(TicketDAO.class); // Create a mock instance of TicketDAO
+            when(ticketDAO.checkIfRegVehicleNumberAlreadyExist(ticket.getVehicleRegNumber())).thenReturn(true); // Set the mock to return true for recurrent user
+            fareCalculatorService.ticketDAO = ticketDAO;
+            double farePerHour = Fare.CAR_RATE_PER_HOUR;// Set the hourly rate to 1.125
+
+            // Act
+            fareCalculatorService.calculateFare(ticket);
+
+            // Assert
+            assertEquals(2 * farePerHour * 0.95, ticket.getPrice(), 0.01); // 2 hours * 1.125 * 0.95 = 2.14
+        }
+
+    @Test
+    public void testCalculateFareWithLessThan30MinParkingTime() {
+        FareCalculatorService fareCalculatorService = new FareCalculatorService();
+        Ticket ticket = new Ticket();
+        ticket.setVehicleRegNumber("ABC123");
+        ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, false ));
+        ticket.setInTime(new Date(System.currentTimeMillis() - (20 * 60 * 1000))); // 20 minutes ago
+        ticket.setOutTime(new Date());
+        fareCalculatorService.calculateFare(ticket);
+        assertEquals(0, ticket.getPrice(), 0.01);
+    }
+
+    @Test
+    public void testCalculateFareWith30MinParkingTime() {
+        FareCalculatorService fareCalculatorService = new FareCalculatorService();
+        Ticket ticket = new Ticket();
+        ticket.setVehicleRegNumber("ABC123");
+        ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, false ));
+        ticket.setInTime(new Date(System.currentTimeMillis() - (30 * 60 * 1000))); // 20 minutes ago
+        ticket.setOutTime(new Date());
+        fareCalculatorService.calculateFare(ticket);
+        assertEquals(0, ticket.getPrice(), 0.01);
+    }
+
+
+
+    }
+
+
+
+
