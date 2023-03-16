@@ -20,24 +20,19 @@ public class TicketDAO {
         Connection con = null;
         try {
             con = dataBaseConfig.getConnection();
+            int updateRowCount;
             try (PreparedStatement ps = con.prepareStatement(DBConstants.SAVE_TICKET)){
             //ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
             ps.setInt(1, ticket.getParkingSpot().getId());
             ps.setString(2, ticket.getVehicleRegNumber());
             ps.setDouble(3, ticket.getPrice());
             ps.setTimestamp(4, new Timestamp(ticket.getInTime().getTime()));
-            ps.setTimestamp(5, (ticket.getOutTime() == null) ? null : (new Timestamp(ticket.getOutTime().getTime())));
-
-           boolean result = ps.execute();
-
-           return result;
-
+                ps.setTimestamp(5, (ticket.getOutTime() == null)?null: (new Timestamp(ticket.getOutTime().getTime())));
+                updateRowCount = ps.executeUpdate();
         }
-
-
+                return updateRowCount == 1;
         }catch (Exception ex){
             logger.error("Error fetching next available slot",ex);
-            return false;
         }finally {
             dataBaseConfig.closeConnection(con);
             try {
@@ -45,9 +40,11 @@ public class TicketDAO {
             } catch (Exception ex) {
                 logger.error("Error closing database connection", ex);
             }
-
         }
+        return false;
     }
+
+
 
     public Ticket getTicket(String vehicleRegNumber) {
         Connection con = null;
@@ -106,7 +103,7 @@ public class TicketDAO {
      * @param vehicleRegNumber vehicle registration number
      * @return boolean
      */
-    public boolean checkIfRegVehicleNumberAlreadyExist(String vehicleRegNumber) {
+  /*  public boolean checkIfRegVehicleNumberAlreadyExist(String vehicleRegNumber) {
         Connection con = null;
         boolean alreadyExist = false;
         try {
@@ -126,5 +123,26 @@ public class TicketDAO {
             dataBaseConfig.closeConnection(con);
         }
         return alreadyExist;
+    } */
+
+    public boolean checkIfRegVehicleNumberAlreadyExist (String vehicleRegNumber) throws Exception {
+        Connection con = null;
+        boolean alreadyExist = false;
+        try {
+            con = dataBaseConfig.getConnection();
+            try (PreparedStatement ps = con.prepareStatement(DBConstants.CHECK_VEHICLE_REG_NUMBER)) {
+                ps.setString(1, vehicleRegNumber);
+                ResultSet rs = ps.executeQuery();
+                alreadyExist = rs.next();
+                rs.close();
+            }
+        } catch (SQLException e) {
+            logger.error("Error checking if vehicle registration number already exist", e);
+            throw new Exception("Error checking if vehicle registration number already exist", e);
+        } finally {
+            dataBaseConfig.closeConnection(con);
+        }
+        return alreadyExist;
     }
+
 }

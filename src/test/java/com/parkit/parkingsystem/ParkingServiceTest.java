@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class ParkingServiceTest {
 
-    private static ParkingService parkingService;
+    static ParkingService parkingService;
 
     @Mock
     private static InputReaderUtil inputReaderUtil;
@@ -47,7 +47,7 @@ public class ParkingServiceTest {
     private static ParkingSpot parkingSpot;
 
     @Mock
-    private static Ticket ticket;
+    static Ticket ticket;
 
     @Mock
     private static FareCalculatorService fareCalculatorService;
@@ -56,20 +56,11 @@ public class ParkingServiceTest {
     @BeforeEach
     private void setUpPerTest() {
         try {
-            //when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
-
             ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
-
-
             ticket = new Ticket();
             ticket.setInTime(new Date(System.currentTimeMillis() - (60 * 60 * 1000)));
             ticket.setParkingSpot(parkingSpot);
             ticket.setVehicleRegNumber("ABCDEF");
-            //when(ticketDAO.getTicket("ABCDEF")).thenReturn(ticket);
-            //when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(true);
-
-            // when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
-
             parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,6 +79,7 @@ public class ParkingServiceTest {
             ticket.setInTime(new Date(System.currentTimeMillis() - (60 * 60 * 1000)));
             ticket.setParkingSpot(parkingSpot);
             ticket.setVehicleRegNumber("ABCDEF");
+            when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
             parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 
             when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(1);
@@ -126,6 +118,7 @@ public class ParkingServiceTest {
             ticket.setInTime(new Date(System.currentTimeMillis() - (60 * 60 * 1000)));
             ticket.setParkingSpot(parkingSpot);
             ticket.setVehicleRegNumber("ABCDEF");
+            when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
             parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
             when(inputReaderUtil.readSelection()).thenReturn(2);
             when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(2);

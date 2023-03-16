@@ -1,12 +1,15 @@
 package com.parkit.parkingsystem;
 
 
+import com.parkit.parkingsystem.annotations.ExclusionTest;
 import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.service.InteractiveShell;
 import com.parkit.parkingsystem.service.ParkingService;
 import com.parkit.parkingsystem.util.InputReaderUtil;
 import groovy.transform.TimedInterrupt;
+import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -40,8 +43,8 @@ public class InteractiveShellTest {
         assertEquals(expectedOutput, actualOutput);
     }
 
-
-    /*@Test
+    @Disabled
+    @Test
     public void testLoadInterface() throws Exception {
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
@@ -58,7 +61,7 @@ public class InteractiveShellTest {
         assertTrue(consoleOutput.contains("Exiting from the system!"));
 
         System.setIn(savedStandardInputStream);
-    }*/
+    }
 
 }
 

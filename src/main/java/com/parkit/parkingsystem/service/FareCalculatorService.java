@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 public class FareCalculatorService {
     public TicketDAO ticketDAO = new TicketDAO();
 
-    public void calculateFare(Ticket ticket){
+    public void calculateFare(Ticket ticket) throws Exception {
         if( (ticket.getOutTime() == null) || (ticket.getOutTime().before(ticket.getInTime())) ){
             throw new IllegalArgumentException("Out time provided is incorrect:"+ticket.getOutTime().toString());
         }
